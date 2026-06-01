@@ -7,9 +7,11 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-xdebug": "*",
         "doctrine/doctrine-bundle": "^2.18",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6",
+        "guzzlehttp/guzzle": "^7.10.6",
         "phpdocumentor/reflection-docblock": "^6.0",
         "phpstan/phpdoc-parser": "^2.3",
         "symfony/asset": "7.4.*",
@@ -25,7 +27,7 @@
         "symfony/intl": "7.4.*",
         "symfony/mailer": "7.4.*",
         "symfony/mime": "7.4.*",
-        "symfony/monolog-bundle": "^3.0|^4.0",
+        "symfony/monolog-bundle": "*",
         "symfony/notifier": "7.4.*",
         "symfony/process": "7.4.*",
         "symfony/property-access": "7.4.*",
@@ -42,8 +44,7 @@
         "symfony/web-link": "7.4.*",
         "symfony/yaml": "7.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "ext-xdebug": "*"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
