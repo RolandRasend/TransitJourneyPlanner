@@ -1,0 +1,16 @@
+header {
+    text-align: center;
+    margin-block-end: var(--gap);
+}
+
+header h1 {
+    font-size: 2rem;
+    color: var(--color-accent);
+    letter-spacing: 0.03em;
+}
+
+header p {
+    color: var(--color-text-muted);
+    margin-block-start: 0.4rem;
+    font-size: 0.95rem;
+}

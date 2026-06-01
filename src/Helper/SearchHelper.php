@@ -56,4 +56,48 @@ class SearchHelper
             return false;
         }
     }
+
+    public function prepareResult(array $raw): array
+    {
+        $tz  = new \DateTimeZone('Europe/Berlin');
+        $leg = $raw['itineraries'][0]['legs'][0];
+
+        $depTime = (new \DateTimeImmutable($leg['from']['departure']))->setTimezone($tz);
+        $arrTime = (new \DateTimeImmutable($leg['to']['arrival']))->setTimezone($tz);
+
+        $intermediateStops = $leg['intermediateStops'] ?? [];
+        $stopCount         = count($intermediateStops);
+
+        $stopsHtml = '';
+        foreach ($intermediateStops as $stop) {
+            $stopName = htmlspecialchars($stop['name'] ?? '');
+            $stopArr  = (new \DateTimeImmutable($stop['arrival']))->setTimezone($tz);
+            $stopDep  = (new \DateTimeImmutable($stop['departure']))->setTimezone($tz);
+            $stopsHtml .= sprintf(
+                '<li class="journey__stop">'
+                . '<time class="journey__stop-arr" datetime="%s">%s</time>'
+                . '<time class="journey__stop-dep" datetime="%s">%s</time>'
+                . '<span class="journey__stop-name">%s</span>'
+                . '</li>',
+                $stopArr->format('Y-m-d\TH:i'), $stopArr->format('H:i'),
+                $stopDep->format('Y-m-d\TH:i'), $stopDep->format('H:i'),
+                $stopName
+            );
+        }
+
+        return [
+            'fromName'     => htmlspecialchars($leg['from']['name'] ?? ''),
+            'toName'       => htmlspecialchars($leg['to']['name'] ?? ''),
+            'depFormatted' => $depTime->format('H:i'),
+            'arrFormatted' => $arrTime->format('H:i'),
+            'depAttr'      => $depTime->format('Y-m-d\TH:i'),
+            'arrAttr'      => $arrTime->format('Y-m-d\TH:i'),
+            'stopLabel'    => match($stopCount) {
+                0       => 'Keine Zwischenhalte',
+                1       => '1 Zwischenhalt',
+                default => $stopCount . ' Zwischenhalte',
+            },
+            'stopsHtml'    => $stopsHtml,
+        ];
+    }
 }

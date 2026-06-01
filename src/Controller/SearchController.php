@@ -9,10 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @author      robertthieme
- * @since       01.06.26
- */
 class SearchController
 {
     public function __construct(
@@ -24,11 +20,27 @@ class SearchController
     public function search(Request $request): Response
     {
         $query = $request->query;
-        $origin = $query->get('origin');
-        $destination = $query->get('destination');
-        $departureTime = $query->get('departure_time');
-        $journeySearch = new JourneySearch()->setDepartureTime($departureTime)->setOrigin($origin)->setDestination($destination);
+        $journeySearch = new JourneySearch();
+        $journeySearch
+            ->setDepartureTime($query->get('departure_time'))
+            ->setOrigin($query->get('origin'))
+            ->setDestination($query->get('destination'));
+
         $searchResult = $this->searchHelper->search($journeySearch);
-        return new Response();
+
+        if (empty($searchResult['itineraries'])) {
+            return new Response('<p>Keine Verbindung gefunden.</p>', Response::HTTP_OK, ['Content-Type' => 'text/html']);
+        }
+
+        $data     = $this->searchHelper->prepareResult($searchResult);
+        $template = file_get_contents(__DIR__ . '/../../public/html/journey-result.html');
+
+        $html = str_replace(
+            ['{{fromName}}', '{{toName}}', '{{depAttr}}', '{{depFormatted}}', '{{arrAttr}}', '{{arrFormatted}}', '{{stopLabel}}', '{{stopsHtml}}'],
+            [$data['fromName'], $data['toName'], $data['depAttr'], $data['depFormatted'], $data['arrAttr'], $data['arrFormatted'], $data['stopLabel'], $data['stopsHtml']],
+            $template
+        );
+
+        return new Response($html, Response::HTTP_OK, ['Content-Type' => 'text/html; charset=UTF-8']);
     }
 }
