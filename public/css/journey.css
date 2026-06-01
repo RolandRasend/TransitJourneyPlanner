@@ -6,7 +6,7 @@
     --color-bg: #1a0033;
     --color-surface: #2d0057;
     --color-text: #ffffff;
-    --color-text-muted: #e0c8ff;
+    --color-text-muted: #f0e0ff;
     --color-input-bg: #3b006e;
     --color-input-border: #9b59d0;
     --color-focus-ring: #f5c400;
@@ -92,7 +92,7 @@ input[type="time"] {
 
 input[type="text"]::placeholder,
 input[type="time"]::placeholder {
-    color: #9b7abf;
+    color: #c4a8e8;
 }
 
 input[type="text"]:focus,
