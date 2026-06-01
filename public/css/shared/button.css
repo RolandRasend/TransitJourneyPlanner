@@ -1,0 +1,23 @@
+button[type="submit"] {
+    background-color: var(--color-accent);
+    color: #1a0033;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.75rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background-color 0.2s, outline-color 0.2s;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    align-self: stretch;
+}
+
+button[type="submit"]:hover {
+    background-color: var(--color-accent-dark);
+}
+
+button[type="submit"]:focus-visible {
+    outline-color: var(--color-text);
+}

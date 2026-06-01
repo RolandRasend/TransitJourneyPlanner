@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verbindung – TransitJourneyPlanner</title>
+    <link rel="stylesheet" href="/css/shared/base.css">
+    <link rel="stylesheet" href="/css/shared/header.css">
+    <link rel="stylesheet" href="/css/journey-result.css">
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Verbindung</h1>
+            <p>{{fromName}} → {{toName}}</p>
+        </header>
+
+        <article class="journey" aria-label="Verbindungsdetails">
+
+            <div class="journey__station">
+                <time class="journey__time" datetime="{{depAttr}}">{{depFormatted}}</time>
+                <span class="journey__name">{{fromName}}</span>
+            </div>
+
+            <div class="journey__leg">
+                <div class="journey__line-track" aria-hidden="true"></div>
+
+                <details class="journey__stops-wrapper">
+                    <summary class="journey__stops-summary">{{stopLabel}}</summary>
+                    <ol class="journey__stops-list">
+                        {{stopsHtml}}
+                    </ol>
+                </details>
+            </div>
+
+            <div class="journey__station">
+                <time class="journey__time" datetime="{{arrAttr}}">{{arrFormatted}}</time>
+                <span class="journey__name">{{toName}}</span>
+            </div>
+
+        </article>
+    </main>
+</body>
+</html>

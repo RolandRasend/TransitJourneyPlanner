@@ -1,0 +1,49 @@
+form {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+}
+
+fieldset {
+    border: none;
+    display: contents;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="time"] {
+    background-color: var(--color-input-bg);
+    color: var(--color-text);
+    border: 1.5px solid var(--color-input-border);
+    border-radius: var(--radius);
+    padding: 0.65rem 0.9rem;
+    font-size: 1rem;
+    transition: border-color 0.2s, outline-color 0.2s;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+input[type="text"]::placeholder,
+input[type="time"]::placeholder {
+    color: #c4a8e8;
+}
+
+input[type="text"]:focus,
+input[type="time"]:focus {
+    border-color: var(--color-focus-ring);
+    outline-color: var(--color-focus-ring);
+}

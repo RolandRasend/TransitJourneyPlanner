@@ -14,6 +14,7 @@ class JourneySearch
         return $this->origin;
     }
 
+    //needs to be turned to geo data or station id in landing page form
     public function setOrigin(string $origin): JourneySearch
     {
         $this->origin = $origin;
@@ -25,6 +26,7 @@ class JourneySearch
         return $this->destination;
     }
 
+    //needs to be turned to geo data or station id in landing page form
     public function setDestination(string $destination): JourneySearch
     {
         $this->destination = $destination;
@@ -41,6 +43,4 @@ class JourneySearch
         $this->departureTime = $departureTime;
         return $this;
     }
-
-
 }
