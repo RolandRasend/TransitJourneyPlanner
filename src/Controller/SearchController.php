@@ -18,6 +18,6 @@ class SearchController
     {
         $test = $request->getContent();
 
-        return new Response('<html><body>'.$test.'</body></html>');
+        return new Response('<html><body>ahhh</body></html>');
     }
 }
