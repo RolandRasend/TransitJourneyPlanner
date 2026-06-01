@@ -23,3 +23,4 @@
 ###< symfony/asset-mapper ###
 
 .idea/
+/docker/php/xdebug.ini
