@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verbindungssuche – TransitJourneyPlanner</title>
+    <link rel="stylesheet" href="/css/journey.css">
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Verbindungssuche</h1>
+            <p>Bahn- &amp; ÖPNV-Verbindungen finden</p>
+        </header>
+
+        <form method="get" action="/search">
+            <fieldset>
+                <legend class="sr-only">Reisedaten eingeben</legend>
+
+                <label for="origin">
+                    Abfahrtsort
+                    <input
+                        type="text"
+                        id="origin"
+                        name="origin"
+                        placeholder="Leipzig"
+                        required
+                    >
+                </label>
+
+                <label for="destination">
+                    Zielort
+                    <input
+                        type="text"
+                        id="destination"
+                        name="destination"
+                        placeholder="Berlin"
+                        required
+                    >
+                </label>
+
+                <label for="departure-time">
+                    Abfahrtszeit
+                    <input
+                        type="text"
+                        id="departure-time"
+                        name="departure_time"
+                        placeholder="18:15"
+                        pattern="^([01]\d|2[0-3]):[0-5]\d$"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        title="Uhrzeit im Format HH:MM (z. B. 18:15)"
+                        required
+                    >
+                </label>
+            </fieldset>
+
+            <button type="submit">Suchen</button>
+        </form>
+    </main>
+</body>
+</html>
