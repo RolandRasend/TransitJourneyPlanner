@@ -17,7 +17,8 @@ class SearchController
     public function search(Request $request): Response
     {
         $test = $request->getContent();
-
+        var_dump(['blubb' => ['blubb' => $test]]);
+        xdebug_info();
         return new Response('<html><body>ahhh</body></html>');
     }
 }
