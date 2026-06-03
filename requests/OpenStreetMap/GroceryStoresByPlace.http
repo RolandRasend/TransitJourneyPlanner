@@ -1,0 +1,7 @@
+###
+POST https://overpass-api.de/api/interpreter
+data=%2F*%0AThis+has+been+generated+by+the+overpass-turbo+wizard.%0AThe+original+search+was%3A%0A%E2%80%9Cgrocery%E2%80%9D%0A*%2F%0A%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0A%2F%2F+gather+results%0A(%0Aarea%5Bname%3D%22Berlin%22%5D-%3E.state%3B%0Aarea%5Bname%3D%22Berlin%22%5D-%3E.city%3B%0Anwr%5B%22shop%22%3D%22supermarket%22%5D%5B%22brand%22%3D%22Rewe%22%5D(area.state)(area.city)(51.08670383258606%2C13.496704101562502%2C51.250312132383264%2C14.06730651855469)%3B%0Anwr%5B%22shop%22%3D%22supermarket%22%5D%5B%22brand%22%3D%22Netto+Marken-Discount%22%5D(area.state)(area.city)(51.08670383258606%2C13.496704101562502%2C51.250312132383264%2C14.06730651855469)%3B%0A)%3B%0A%2F%2F+print+results%0Aout+center%3B
+
+
+
+###
