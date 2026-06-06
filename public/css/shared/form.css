@@ -25,7 +25,8 @@ label {
 }
 
 input[type="text"],
-input[type="time"] {
+input[type="time"],
+input[type="datetime-local"] {
     background-color: var(--color-input-bg);
     color: var(--color-text);
     border: 1.5px solid var(--color-input-border);
@@ -38,12 +39,14 @@ input[type="time"] {
 }
 
 input[type="text"]::placeholder,
-input[type="time"]::placeholder {
+input[type="time"]::placeholder,
+input[type="datetime-local"]::placeholder {
     color: #c4a8e8;
 }
 
 input[type="text"]:focus,
-input[type="time"]:focus {
+input[type="time"]:focus,
+input[type="datetime-local"]:focus {
     border-color: var(--color-focus-ring);
     outline-color: var(--color-focus-ring);
 }

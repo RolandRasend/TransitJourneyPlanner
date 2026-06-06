@@ -14,14 +14,53 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class SearchHelper
 {
     private const string MOTIS_BASE_URL = 'https://europe.motis-project.de';
+    private const string NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org/';
     private const string PLAN_ENDPOINT  = '/api/v1/plan';
+    private const string ACCEPTED_COUNTRIES = 'AL,AD,AM,AT,AZ,BY,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,GE,DE,GR,HU,IS,IE,IT,LV,LI,LT,LU,MT,MD,MC,ME,NL,MK,NO,PL,PT,RO,RU,SM,RS,SK,SI,ES,SE,CH,TR,UA,GB,VA';
 
     public function __construct(
         #[Autowire(service: 'monolog.logger.search_helper')] private readonly LoggerInterface $logger,
     ) {
     }
 
-    public function search(JourneySearch $search): mixed
+    public function lookupGeoCoordinates(string ... $stationNames): array|false
+    {
+        $hits = [];
+
+        $client = new Client([
+            'base_uri' => self::NOMINATIM_BASE_URL,
+            'timeout'  => 20.0,
+        ]);
+        foreach ($stationNames as $name) {
+            try {
+                $response = $client->get('search', [
+                    'headers' => [
+                        'Accept'       => 'application/json',
+                        'Content-Type' => 'application/json',
+                    ],
+                    'query' => [
+                        'q' => $name . '&format=json&&accept-language=de,en&countrycodes=' . self::ACCEPTED_COUNTRIES,
+                    ],
+                ]);
+
+                $hits[] = json_decode($response->getBody()->getContents(), true);
+            } catch (GuzzleException $e) {
+                $this->logger->error(
+                    'Nominatim search request failed for ' . $name,
+                    [
+                        'file'      => $e->getFile(),
+                        'code'      => $e->getCode(),
+                        'message'   => $e->getMessage(),
+                        'source'    => __METHOD__ . ' Z-' . __LINE__,
+                    ],
+                );
+            }
+        }
+
+        return $hits;
+    }
+
+    public function searchTrip(JourneySearch $search): mixed
     {
         $client = new Client([
             'base_uri' => self::MOTIS_BASE_URL,
