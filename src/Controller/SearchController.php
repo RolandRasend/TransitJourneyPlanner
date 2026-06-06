@@ -26,7 +26,19 @@ class SearchController
             ->setOrigin($query->get('origin'))
             ->setDestination($query->get('destination'));
 
-        $searchResult = $this->searchHelper->search($journeySearch);
+        [$origin, $destination] = $this->searchHelper->lookupGeoCoordinates(
+            $journeySearch->getDestination(),
+            $journeySearch->getOrigin()
+        );
+        if (!$origin || !$destination) {
+            return new Response('<p>Keine Bahnhöfe gefunden.</p>', Response::HTTP_OK, ['Content-Type' => 'text/html']);
+        }
+
+        $journeySearch
+            ->setOrigin($origin)
+            ->setDestination($destination);
+
+        $searchResult = $this->searchHelper->searchTrip($journeySearch);
 
         if (empty($searchResult['itineraries'])) {
             return new Response('<p>Keine Verbindung gefunden.</p>', Response::HTTP_OK, ['Content-Type' => 'text/html']);
