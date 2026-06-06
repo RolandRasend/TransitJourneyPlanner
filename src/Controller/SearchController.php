@@ -26,7 +26,7 @@ class SearchController
             ->setOrigin($query->get('origin'))
             ->setDestination($query->get('destination'));
 
-        [$origin, $destination] = $this->searchHelper->lookupGeoCoordinates(
+        [$destination, $origin] = $this->searchHelper->lookupGeoCoordinates(
             $journeySearch->getDestination(),
             $journeySearch->getOrigin()
         );

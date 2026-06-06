@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Helper;
 
 use App\Entity\JourneySearch;
+use DateMalformedStringException;
 use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Client;
@@ -14,9 +15,35 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class SearchHelper
 {
     private const string MOTIS_BASE_URL = 'https://europe.motis-project.de';
-    private const string NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org/';
-    private const string PLAN_ENDPOINT  = '/api/v1/plan';
-    private const string ACCEPTED_COUNTRIES = 'AL,AD,AM,AT,AZ,BY,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,GE,DE,GR,HU,IS,IE,IT,LV,LI,LT,LU,MT,MD,MC,ME,NL,MK,NO,PL,PT,RO,RU,SM,RS,SK,SI,ES,SE,CH,TR,UA,GB,VA';
+    private const string PLAN_ENDPOINT  = '/api/v6/plan';
+    private const array DEFAULT_MODES = [
+        "WALK",
+        "BIKE",
+        "TRANSIT",
+        "TRAM",
+        "SUBWAY",
+        "FERRY",
+        "BUS",
+        "COACH",
+        "RAIL",
+        "HIGHSPEED_RAIL",
+        "LONG_DISTANCE",
+        "NIGHT_RAIL",
+        "REGIONAL_FAST_RAIL",
+        "REGIONAL_RAIL",
+        "SUBURBAN",
+        "FUNICULAR",
+        "AERIAL_LIFT",
+        "OTHER",
+        "AREAL_LIFT",
+        "METRO",
+        "CABLE_CAR"
+    ];
+    private const array USER_AGENT = [
+        'name' => 'Transport Journey Planner',
+        'version' => '2.9',
+        'contact' => 'dudeesome@gmail.com'
+    ];
 
     public function __construct(
         #[Autowire(service: 'monolog.logger.search_helper')] private readonly LoggerInterface $logger,
@@ -28,22 +55,36 @@ class SearchHelper
         $hits = [];
 
         $client = new Client([
-            'base_uri' => self::NOMINATIM_BASE_URL,
+            'base_uri' => self::MOTIS_BASE_URL,
             'timeout'  => 20.0,
         ]);
         foreach ($stationNames as $name) {
             try {
-                $response = $client->get('search', [
+                $response = $client->get('/api/v1/geocode', [
                     'headers' => [
                         'Accept'       => 'application/json',
                         'Content-Type' => 'application/json',
+                        'User-Agent' => self::USER_AGENT
                     ],
                     'query' => [
-                        'q' => $name . '&format=json&&accept-language=de,en&countrycodes=' . self::ACCEPTED_COUNTRIES,
+                        'text'  => $name,
+                        'lang'  => 'de',
                     ],
                 ]);
 
-                $hits[] = json_decode($response->getBody()->getContents(), true);
+                //take first hit as definite result
+                //todo: add clever parsing of what station is actually meant or move to autocompleter in search form
+                $result = json_decode($response->getBody()->getContents(), true);
+                if (isset($result)) {
+                    $stops = [];
+                    foreach ($result as $item) {
+                        if ($item['type'] === 'STOP') {
+                            $stops[] = $item;
+                        }
+                    }
+                    usort($stops, fn ($a, $b) => $b['importance'] <=> $a['importance']);
+                    $hits[] = $stops[0]['id'] ?? null;
+                }
             } catch (GuzzleException $e) {
                 $this->logger->error(
                     'Nominatim search request failed for ' . $name,
@@ -70,13 +111,15 @@ class SearchHelper
         try {
             $response = $client->get(self::PLAN_ENDPOINT, [
                 'headers' => [
-                    'Accept'       => 'application/json',
+                    'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
+                    'User-Agent' => self::USER_AGENT
                 ],
                 'query' => [
-                    'fromPlace' => 'de-DELFI_de:14713:8010205', // temporär debugging – Leipzig Hbf
-                    'toPlace'   => 'at-Railway-Current-Reference-Data-2026_de:11000:900003200:1:51', // temporär debugging – Berlin Hbf
-                    'time'      => new DateTime($search->getDepartureTime())->format(DateTimeInterface::ATOM),
+                    'fromPlace' => $search->getOrigin(),
+                    'toPlace' => $search->getDestination(),
+                    'time' => new DateTime($search->getDepartureTime())->format(DateTimeInterface::ATOM),
+                    'directModes' => self::DEFAULT_MODES
                 ],
             ]);
 
@@ -84,6 +127,18 @@ class SearchHelper
         } catch (GuzzleException $e) {
             $this->logger->error(
                 'MOTIS API request failed',
+                [
+                    'file'      => $e->getFile(),
+                    'code'      => $e->getCode(),
+                    'message'   => $e->getMessage(),
+                    'source'    => __METHOD__ . ' Z-' . __LINE__,
+                ],
+            );
+
+            return false;
+        } catch (DateMalformedStringException $e) {
+            $this->logger->error(
+                'Date object creation for search failed with date ' . $search->getDepartureTime(),
                 [
                     'file'      => $e->getFile(),
                     'code'      => $e->getCode(),
