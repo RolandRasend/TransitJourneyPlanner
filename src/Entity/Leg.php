@@ -11,7 +11,7 @@ class Leg
     private string $departurePlaceName;
     private DateTime $departure;
     private DateTime $arrival;
-    private string $track;
+    private ?string $track;
     private string $mode;
     private int $duration;
 
